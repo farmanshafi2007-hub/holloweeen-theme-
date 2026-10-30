@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#110A2A">
+  <title>FORGESOFTWARES — Breathing Life Into Premium Experiences</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & RESET
+       ========================================================================== */
+    :root {
+      --night: #110A2A;
+      --ink: #F4F0FF;
+      --soft: rgba(232, 226, 255, .78);
+      --ember: #FF9A3C;
+      --ease: cubic-bezier(.2, .8, .2, 1);
+      --artH: calc(100vw * 1520 / 2688);
+      --sprite-sheet: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023917_156ac3d3-e103-4a95-947d-07554914ab0b.png&w=1024&q=85');
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      background-color: var(--night);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      overscroll-behavior-y: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* ==========================================================================
+       NAVIGATION
+       ========================================================================== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      padding: 0 2.2vw;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(17, 10, 42, .55), transparent);
+      z-index: 50;
+      transform: translateY(-100%);
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 5.6vw;
+    }
+
+    .nav-right {
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: rgba(244, 240, 255, .82);
+      transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav a:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav .tickets-btn {
+      border: 1px solid rgba(244, 240, 255, .6);
+      padding: 9px 14px;
+      border-radius: 2px;
+      color: var(--ink);
+    }
+
+    .nav .tickets-btn:hover {
+      background-color: #FFFFFF;
+      color: var(--night);
+      border-color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       SCROLLER & SCENE SHELLS
+       ========================================================================== */
+    #scroller {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      will-change: transform;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: var(--artH);
+      overflow-x: clip;
+    }
+
+    .scene.hero-scene {
+      overflow: clip;
+    }
+
+    .art {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: var(--artH);
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .art .bg {
+      position: absolute;
+      inset: 0;
+      background: var(--img) center / 100% 100% no-repeat;
+    }
+
+    /* ==========================================================================
+       SEAMS: ILLUSTRATED ROCK BANDS ACROSS JOINS
+       ========================================================================== */
+    .seam {
+      position: relative;
+      height: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .seam .band {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      aspect-ratio: 2688 / 1152;
+      transform: translateY(-50%);
+    }
+
+    .seam .band img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      z-index: 1;
+    }
+
+    .seam .band canvas.fall {
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       CANVASES (WATERFALLS, LAVA & PARTICLES)
+       ========================================================================== */
+    canvas.fall {
+      position: absolute;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 12%, #000 82%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 12%, #000 82%, transparent 100%);
+      mask-composite: intersect;
+    }
+
+    canvas.dust {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       GLOWS, MIST & MOONGLOW
+       ========================================================================== */
+    .glow, .mist, .moonglow {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      aspect-ratio: 1 / 1;
+    }
+
+    .glow {
+      background: radial-gradient(closest-side, rgba(255, 150, 60, .7), rgba(255, 110, 40, .22) 50%, transparent 100%);
+      animation: flicker 2.8s steps(1, end) infinite;
+    }
+
+    .glow.cold {
+      background: radial-gradient(closest-side, rgba(150, 235, 255, .6), rgba(110, 190, 255, .2) 50%, transparent 100%);
+      animation: breathe 3.8s ease-in-out infinite;
+    }
+
+    .mist {
+      aspect-ratio: auto;
+      background: radial-gradient(closest-side, rgba(170, 235, 255, .55), rgba(120, 200, 255, .18) 55%, transparent 100%);
+      animation: breathe 4.6s ease-in-out infinite;
+    }
+
+    .moonglow {
+      background: radial-gradient(closest-side, transparent 0%, transparent 62%, rgba(255, 226, 170, .32) 70%, rgba(190, 150, 255, .12) 85%, transparent 100%);
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes flicker {
+      0%    { opacity: 1; }
+      12.5% { opacity: .78; }
+      25%   { opacity: 1; }
+      37.5% { opacity: .86; }
+      50%   { opacity: 1; }
+      62.5% { opacity: .7; }
+      75%   { opacity: .95; }
+      87.5% { opacity: .82; }
+      100%  { opacity: 1; }
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        filter: brightness(1);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter: brightness(1.25);
+      }
+    }
+
+    /* ==========================================================================
+       SPRITE SHEET CROPS (GHOSTS & BATS)
+       ========================================================================== */
+    .sprite {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-image: var(--sprite-sheet);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .ghost {
+      filter: drop-shadow(0 0 10px rgba(170, 235, 255, .45));
+    }
+
+    /* ghost1: [39, 103, 204, 221] */
+    .ghost1 {
+      aspect-ratio: 204 / 221;
+      background-size: 501.9608% 311.3122%;
+      background-position: 4.7561% 22.0557%;
+    }
+
+    /* ghost2: [303, 122, 152, 212] */
+    .ghost2 {
+      aspect-ratio: 152 / 212;
+      background-size: 673.6842% 324.5283%;
+      background-position: 34.7477% 25.6303%;
+    }
+
+    /* ghost3: [538, 125, 208, 201] */
+    .ghost3 {
+      aspect-ratio: 208 / 201;
+      background-size: 492.3077% 342.2886%;
+      background-position: 65.9314% 25.6674%;
+    }
+
+    /* ghost4: [833, 70, 131, 280] */
+    .ghost4 {
+      aspect-ratio: 131 / 280;
+      background-size: 781.6794% 245.7143%;
+      background-position: 93.2811% 17.1569%;
+    }
+
+    /* bat, wings up: [41, 389, 203, 221] */
+    .bat {
+      aspect-ratio: 203 / 221;
+      background-size: 504.4335% 311.3122%;
+      background-position: 4.9939% 83.2976%;
+    }
+
+    /* bat, wings down: [299, 389, 195, 221] */
+    .bat.down {
+      background-size: 525.1282% 311.3122%;
+      background-position: 36.0676% 83.2976%;
+    }
+
+    /* ==========================================================================
+       TYPOGRAPHY & COPY BLOCKS
+       ========================================================================== */
+    .hero-copy {
+      position: absolute;
+      top: calc(var(--artH) * .085);
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 6;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .hero-copy h1 {
+      display: inline-block;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: clamp(34px, 5.2vw, 102px);
+      line-height: 1;
+      --ls: .32em;
+      --lsx: 0em;
+      letter-spacing: calc(var(--ls) + var(--lsx));
+      padding-left: calc(var(--ls) + var(--lsx));
+      overflow: hidden;
+      text-shadow: 0 0 40px rgba(120, 90, 255, .45);
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .hero-copy h1 > span {
+      display: inline-block;
+      transform: translateY(110%);
+      will-change: transform;
+    }
+
+    .hero-copy .sub {
+      position: absolute;
+      top: calc(var(--artH) * .335);
+      left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: clamp(12px, 1.18vw, 22px);
+      letter-spacing: .62em;
+      padding-left: .62em;
+      color: #FFFFFF;
+      text-shadow: none;
+      white-space: nowrap;
+      clip-path: inset(0 50% 0 50%);
+      will-change: transform, letter-spacing, clip-path;
+    }
+
+    .copy {
+      position: absolute;
+      max-width: 520px;
+      z-index: 6;
+    }
+
+    .copy h2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: clamp(30px, 3.4vw, 60px);
+      line-height: 1.04;
+      letter-spacing: -.025em;
+      color: var(--ink);
+    }
+
+    .copy .rule {
+      width: 150px;
+      height: 1px;
+      background: rgba(244, 240, 255, .45);
+      margin: 20px 0 22px;
+      transform-origin: left;
+      transform: scaleX(0);
+      will-change: transform;
+    }
+
+    .copy h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      margin-top: 22px;
+      margin-bottom: 8px;
+    }
+
+    .copy .rule + h3 {
+      margin-top: 0;
+    }
+
+    .copy p {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--soft);
+      max-width: 52ch;
+    }
+
+    .copy p + p {
+      margin-top: 10px;
+    }
+
+    /* Line Mask Reveal System */
+    .ln {
+      display: block;
+      overflow: hidden;
+    }
+
+    .ln > span {
+      display: block;
+      transform: translateY(105%);
+      will-change: transform;
+    }
+
+    .btn-wrap {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      padding: 0 18px;
+      background-color: #FFFFFF;
+      color: var(--night);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 12.5px;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.35s var(--ease);
+    }
+
+    .btn:hover {
+      background-color: var(--ember);
+      color: #1A0B05;
+      border-color: var(--ember);
+      transform: translateY(-2px);
+    }
+
+    .btn.ghost-btn {
+      background-color: transparent;
+      color: var(--ink);
+      border: 1px solid rgba(244, 240, 255, .6);
+    }
+
+    .btn.ghost-btn:hover {
+      background-color: var(--ember);
+      color: #1A0B05;
+      border-color: var(--ember);
+      transform: translateY(-2px);
+    }
+
+    /* Finale Centered Copy Overrides */
+    .copy.finale-copy {
+      left: 50%;
+      transform: translateX(-50%);
+      top: 30%;
+      width: 60%;
+      max-width: none;
+      text-align: center;
+    }
+
+    .copy.finale-copy h2 {
+      font-size: clamp(34px, 4.4vw, 78px);
+    }
+
+    .copy.finale-copy .rule {
+      margin-left: auto;
+      margin-right: auto;
+      transform-origin: center;
+    }
+
+    .copy.finale-copy .btn-wrap {
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       CURSOR LANTERN LIGHT
+       ========================================================================== */
+    .lamp {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(255, 170, 90, .16), rgba(255, 140, 70, .06) 55%, transparent 100%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 45;
+      display: none;
+      will-change: transform;
+    }
+
+    @media (pointer: fine) {
+      .lamp {
+        display: block;
+      }
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINT (≤ 767px)
+       ========================================================================== */
+    @media (max-width: 767px) {
+      :root {
+        --artH: max(calc(100vw * 1520 / 2688), 92svh);
+      }
+
+      .nav {
+        height: 56px;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-left,
+      .nav-right a:not(.tickets-btn) {
+        display: none;
+      }
+
+      .art {
+        --artW: calc(var(--artH) * 2688 / 1520);
+        width: var(--artW);
+        left: calc(50vw - var(--focus) * var(--artW) / 100);
+      }
+
+      .seam .band {
+        --artW: calc(var(--artH) * 2688 / 1520);
+        width: var(--artW);
+        left: calc(50vw - var(--focus) * var(--artW) / 100);
+      }
+
+      .hero-copy {
+        top: calc(var(--artH) * .11);
+      }
+
+      .hero-copy h1 {
+        font-size: 7.2vw;
+        --ls: .10em;
+      }
+
+      .hero-copy .sub {
+        top: calc(var(--artH) * .305);
+        font-size: 10.5px;
+        letter-spacing: .34em;
+        padding-left: .34em;
+      }
+
+      .copy:not(.finale-copy) {
+        left: 20px !important;
+        right: 20px !important;
+        width: auto !important;
+        max-width: none;
+        top: 24% !important;
+        background: linear-gradient(rgba(17, 10, 42, .78), rgba(17, 10, 42, .5));
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        padding: 18px;
+        border-radius: 2px;
+      }
+
+      .copy:not(.finale-copy) h2 {
+        font-size: 30px;
+      }
+
+      .copy:not(.finale-copy) p {
+        font-size: 13.5px;
+      }
+
+      .copy.finale-copy {
+        top: 26% !important;
+        width: calc(100% - 40px) !important;
+        background: none;
+        padding: 0;
+      }
+    }
+
+    /* ==========================================================================
+       REDUCED MOTION PREFERENCES
+       ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      .glow, .glow.cold, .mist, .moonglow {
+        animation: none !important;
+      }
+      .nav {
+        transform: none !important;
+      }
+      .hero-copy h1 > span,
+      .ln > span {
+        transform: none !important;
+      }
+      .hero-copy .sub {
+        transform: translateX(-50%) translateY(0) !important;
+        clip-path: inset(0) !important;
+      }
+      .copy .rule {
+        transform: scaleX(1) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Navigation Bar -->
+  <header class="nav" id="nav">
+    <div class="nav-left">
+      <a href="#story" data-nav>Our Story</a>
+      <a href="#rites" data-nav>The Craft</a>
+      <a href="#night" data-nav>Select Clients</a>
+    </div>
+    <a href="#top" class="nav-logo" data-nav aria-label="Forgesoftwares Home">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="13,1 25,23 1,23" fill="#F4F0FF"/>
+        <circle cx="13" cy="15.2" r="3.4" fill="#110A2A"/>
+        <circle cx="14.4" cy="14.4" r="3" fill="#F4F0FF"/>
+      </svg>
+    </a>
+    <div class="nav-right">
+      <a href="#rites" data-nav>Websites &amp; Posters</a>
+      <a href="#finale" data-nav>Showcase</a>
+      <a href="#finale" class="tickets-btn" data-nav>Start a Project</a>
+    </div>
+  </header>
+
+  <!-- Warm Cursor Lantern Light -->
+  <div class="lamp" id="lamp"></div>
+
+  <!-- Fixed Eased Scroller Container -->
+  <main id="scroller">
+
+    <!-- ======================================================================
+         SCENE 1: HERO ("HOLLOWMERE")
+         ====================================================================== -->
+    <section class="scene hero-scene" id="top" style="--focus: 50;">
+      <div class="art" id="hero-art" style="--img: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023809_d6836117-c958-4680-aa43-1e1973fbc17c.png&w=2400&q=85');">
+        <div class="bg"></div>
+
+        <!-- Ring Halo Moonglow -->
+        <div class="moonglow" style="left: 50.2%; top: 25.6%; width: 21%;"></div>
+
+        <!-- Upper Ghost-Light Falls & Pool Mist & Lower Cascade -->
+        <canvas class="fall" data-kind="ghost" data-speed="1" style="left: 47.4%; top: 51%; width: 5.6%; height: 22%;"></canvas>
+        <div class="mist" style="left: 50%; top: 73%; width: 22%; height: 9%;"></div>
+        <canvas class="fall" data-kind="ghost" data-speed="1.15" style="left: 44%; top: 80%; width: 12.4%; height: 34%;"></canvas>
+
+        <!-- 12 Warm Jack-o'-Lantern Glows -->
+        <div class="glow" style="left: 4.8%; top: 54.4%; width: 4.6%; animation-delay: -0.2s;"></div>
+        <div class="glow" style="left: 18.5%; top: 50.6%; width: 3.6%; animation-delay: -1.1s;"></div>
+        <div class="glow" style="left: 17.5%; top: 69.4%; width: 3.8%; animation-delay: -0.7s;"></div>
+        <div class="glow" style="left: 25.9%; top: 38.3%; width: 2.6%; animation-delay: -2.1s;"></div>
+        <div class="glow" style="left: 31.6%; top: 42%; width: 2.4%; animation-delay: -1.4s;"></div>
+        <div class="glow" style="left: 30.4%; top: 63%; width: 2.4%; animation-delay: -0.4s;"></div>
+        <div class="glow" style="left: 80%; top: 36.7%; width: 3%; animation-delay: -1.9s;"></div>
+        <div class="glow" style="left: 85%; top: 45.3%; width: 3%; animation-delay: -0.9s;"></div>
+        <div class="glow" style="left: 93.8%; top: 53%; width: 4.6%; animation-delay: -2.5s;"></div>
+        <div class="glow" style="left: 87.8%; top: 73%; width: 3.8%; animation-delay: -1.6s;"></div>
+        <div class="glow" style="left: 74.5%; top: 61%; width: 2.6%; animation-delay: -0.5s;"></div>
+        <div class="glow" style="left: 67.2%; top: 64.8%; width: 2.6%; animation-delay: -2.3s;"></div>
+
+        <!-- Wisp Particle Canvas -->
+        <canvas class="dust" data-kind="wisp" data-count="70"></canvas>
+
+        <!-- Ghost Sprites -->
+        <div class="sprite ghost ghost1" data-x="21" data-y="30" style="width: 4.2%;"></div>
+        <div class="sprite ghost ghost2" data-x="78" data-y="21" style="width: 3.4%;"></div>
+        <div class="sprite ghost ghost4" data-x="64" data-y="44" style="width: 2.8%;"></div>
+        <div class="sprite ghost ghost3" data-x="36" data-y="46" style="width: 2.4%;"></div>
+
+        <!-- 4 Bats Crossing Sky Band (8% to 34%) -->
+        <div class="sprite bat" data-y0="12" data-amp="2.4" data-dur="12.5" data-off="0.15" data-rate="9.5" style="width: 2.5%;"></div>
+        <div class="sprite bat" data-y0="19" data-amp="3.1" data-dur="15.2" data-off="0.52" data-rate="8.8" style="width: 1.9%;"></div>
+        <div class="sprite bat" data-y0="26" data-amp="1.8" data-dur="10.4" data-off="0.78" data-rate="11.2" style="width: 2.9%;"></div>
+        <div class="sprite bat" data-y0="31" data-amp="2.6" data-dur="13.8" data-off="0.37" data-rate="10.1" style="width: 2.1%;"></div>
+      </div>
+
+      <!-- Hero Copy -->
+      <div class="hero-copy" id="hero-copy">
+        <h1 id="hero-title" aria-label="FORGESOFTWARES">
+          <span>F</span><span>O</span><span>R</span><span>G</span><span>E</span><span>S</span><span>O</span><span>F</span><span>T</span><span>W</span><span>A</span><span>R</span><span>E</span><span>S</span>
+        </h1>
+        <div class="sub" id="hero-sub">PREMIUM EXPERIENCES BROUGHT TO LIFE</div>
+      </div>
+    </section>
+
+    <!-- SEAM 1: Hero -> Our Story -->
+    <div class="seam" style="--focus: 48;">
+      <div class="band">
+        <canvas class="fall" data-kind="ghost" data-speed="1" data-seam="true" style="left: 44.8%; top: 2%; width: 10.4%; height: 90%;"></canvas>
+        <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_025938_e54c50c3-9748-4d00-af68-886bef6e65e7.png&w=2400&q=85" alt="">
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SCENE 2: "OUR STORY" (CRYPT LABORATORY)
+         ====================================================================== -->
+    <section class="scene" id="story" style="--focus: 48;">
+      <div class="art" style="--img: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023812_40e3f5f5-a613-4a33-9c78-4cab8b04a992.png&w=2400&q=85');">
+        <div class="bg"></div>
+
+        <!-- Falls & Mist -->
+        <canvas class="fall" data-kind="ghost" data-speed="0.9" style="left: 40.6%; top: 0%; width: 17.2%; height: 90%;"></canvas>
+        <div class="mist" style="left: 49%; top: 84%; width: 34%; height: 14%;"></div>
+
+        <!-- Cold Cyan Glows (Crystal Ball & Ghost Jars) -->
+        <div class="glow cold" style="left: 20.3%; top: 69.8%; width: 7%; animation-delay: -0.4s;"></div>
+        <div class="glow cold" style="left: 72.5%; top: 19%; width: 5%; animation-delay: -1.2s;"></div>
+        <div class="glow cold" style="left: 80.4%; top: 18.1%; width: 4.4%; animation-delay: -2.5s;"></div>
+        <div class="glow cold" style="left: 76%; top: 41.6%; width: 5.6%; animation-delay: -0.9s;"></div>
+        <div class="glow cold" style="left: 85%; top: 43.3%; width: 4%; animation-delay: -3.1s;"></div>
+        <div class="glow cold" style="left: 70.5%; top: 68.5%; width: 4.4%; animation-delay: -1.7s;"></div>
+        <div class="glow cold" style="left: 77.3%; top: 63.7%; width: 4.4%; animation-delay: -0.2s;"></div>
+        <div class="glow cold" style="left: 85.3%; top: 66.3%; width: 4%; animation-delay: -2.2s;"></div>
+
+        <!-- Warm Glows -->
+        <div class="glow" style="left: 7.6%; top: 85%; width: 4.4%; animation-delay: -0.8s;"></div>
+        <div class="glow" style="left: 13.2%; top: 87%; width: 3.2%; animation-delay: -1.9s;"></div>
+        <div class="glow" style="left: 92.2%; top: 84%; width: 3.6%; animation-delay: -0.3s;"></div>
+
+        <!-- Mote Particle Canvas -->
+        <canvas class="dust" data-kind="mote" data-count="50"></canvas>
+
+        <!-- Ghost Sprite -->
+        <div class="sprite ghost ghost4" data-x="30" data-y="22" style="width: 2.6%;"></div>
+      </div>
+
+      <!-- Section Copy -->
+      <div class="copy" data-reveal style="left: 6.5%; top: 21%; width: 33%;">
+        <h2><span class="ln"><span>Our Story</span></span></h2>
+        <div class="rule"></div>
+        <h3><span class="ln"><span>Where Code Meets Living Art.</span></span></h3>
+        <p>
+          <span class="ln"><span>Forgesoftwares was born from a singular obsession: turning</span></span>
+          <span class="ln"><span>cold screens into living, breathing worlds. We craft premium</span></span>
+          <span class="ln"><span>experiences that people don't just see—they deeply feel.</span></span>
+        </p>
+        <p>
+          <span class="ln"><span>Deep inside our creative laboratory, we distill motion, story,</span></span>
+          <span class="ln"><span>and tactile engineering until every scroll sparks wonder and</span></span>
+          <span class="ln"><span>leaves your customers genuinely happy and unforgettable.</span></span>
+        </p>
+        <p>
+          <span class="ln"><span>We never chase volume or templates. Every detail is forged by</span></span>
+          <span class="ln"><span>hand for founders and brands who refuse to look ordinary.</span></span>
+        </p>
+        <div class="btn-wrap">
+          <span class="ln"><span><a href="#rites" class="btn" data-nav>Explore our craft</a></span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEAM 2: Our Story -> The Rites -->
+    <div class="seam" style="--focus: 40;">
+      <div class="band">
+        <canvas class="fall" data-kind="ghost" data-speed="1" data-seam="true" style="left: 21.4%; top: 22%; width: 10.6%; height: 74%;"></canvas>
+        <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_030022_7a86d576-94d5-4069-b515-62547af3b50c.png&w=2400&q=85" alt="">
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SCENE 3: "THE RITES" (MILL WHEEL CHAMBER)
+         ====================================================================== -->
+    <section class="scene" id="rites" style="--focus: 40;">
+      <div class="art" style="--img: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023814_b2c8f33a-3c90-4aa1-bb91-cce7f0deb878.png&w=2400&q=85');">
+        <div class="bg"></div>
+
+        <!-- Falls & Wheel Impact Mist -->
+        <canvas class="fall" data-kind="ghost" data-speed="1.05" style="left: 19.5%; top: 0%; width: 18%; height: 38%;"></canvas>
+        <div class="mist" style="left: 31%; top: 33%; width: 22%; height: 10%;"></div>
+
+        <!-- Warm Wheel-Pumpkin Glows -->
+        <div class="glow" style="left: 12%; top: 34%; width: 4.2%; animation-delay: -0.5s;"></div>
+        <div class="glow" style="left: 37.5%; top: 47.7%; width: 4.2%; animation-delay: -1.8s;"></div>
+        <div class="glow" style="left: 32.3%; top: 52.6%; width: 4.2%; animation-delay: -0.9s;"></div>
+        <div class="glow" style="left: 11.7%; top: 62.3%; width: 4.2%; animation-delay: -2.4s;"></div>
+        <div class="glow" style="left: 39%; top: 78.2%; width: 4.2%; animation-delay: -1.3s;"></div>
+
+        <!-- Cold Spellbook Glows -->
+        <div class="glow cold" style="left: 64.5%; top: 70.3%; width: 9%; animation-delay: -0.7s;"></div>
+        <div class="glow cold" style="left: 88.5%; top: 70.7%; width: 9%; animation-delay: -2.3s;"></div>
+
+        <!-- Warm Candle Glows -->
+        <div class="glow" style="left: 61.4%; top: 75%; width: 2.4%; animation-delay: -1.1s;"></div>
+        <div class="glow" style="left: 72.6%; top: 75.4%; width: 2.4%; animation-delay: -0.4s;"></div>
+        <div class="glow" style="left: 91.5%; top: 75.4%; width: 2.4%; animation-delay: -2.0s;"></div>
+
+        <!-- Spray Particle Canvas (x 20-40%, y 30-48%) -->
+        <canvas class="dust" data-kind="spray" data-count="60" data-x="20" data-w="20" data-y="30" data-h="18"></canvas>
+      </div>
+
+      <!-- Section Copy -->
+      <div class="copy" data-reveal style="left: 55%; top: 20%; width: 40%;">
+        <h2><span class="ln"><span>What We Forge</span></span></h2>
+        <div class="rule"></div>
+        <h3><span class="ln"><span>Bespoke Websites &amp; Living Worlds.</span></span></h3>
+        <p>
+          <span class="ln"><span>We architect flagship websites, interactive product launches,</span></span>
+          <span class="ln"><span>and custom web applications that flow like liquid silk—built</span></span>
+          <span class="ln"><span>to captivate audiences and turn visitors into loyal fans.</span></span>
+        </p>
+        <h3><span class="ln"><span>Premium Posters &amp; Visual Identity.</span></span></h3>
+        <p>
+          <span class="ln"><span>Beyond code, our studio designs collector-grade posters, key</span></span>
+          <span class="ln"><span>art, brand systems, and campaign visuals with razor-sharp</span></span>
+          <span class="ln"><span>typography and gallery-level illustration.</span></span>
+        </p>
+        <h3><span class="ln"><span>And So Much More.</span></span></h3>
+        <p>
+          <span class="ln"><span>From custom shaders and motion direction to tactile digital</span></span>
+          <span class="ln"><span>flagships, if it demands soul and precision, we build it.</span></span>
+        </p>
+      </div>
+    </section>
+
+    <!-- SEAM 3: The Rites -> Plan Your Night -->
+    <div class="seam" style="--focus: 66;">
+      <div class="band">
+        <canvas class="fall" data-kind="ghost" data-speed="1" data-seam="true" style="left: 60.8%; top: 46%; width: 13.6%; height: 50%;"></canvas>
+        <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_025940_a85237c9-d7e3-4c28-b1d9-71ad7d8cbca4.png&w=2400&q=85" alt="">
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SCENE 4: "PLAN YOUR NIGHT" (CAULDRON FOUNDRY)
+         ====================================================================== -->
+    <section class="scene" id="night" style="--focus: 66;">
+      <div class="art" style="--img: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023817_3e21faea-ad1c-4723-be92-9b22692094e1.png&w=2400&q=85');">
+        <div class="bg"></div>
+
+        <!-- Ghost Falls into Cauldron -->
+        <canvas class="fall" data-kind="ghost" data-speed="1" style="left: 67.4%; top: 0%; width: 11.8%; height: 37%;"></canvas>
+
+        <!-- Three Molten Potion Lava Streams -->
+        <canvas class="fall" data-kind="lava" data-speed="0.55" style="left: 62.3%; top: 66.5%; width: 1.8%; height: 25%;"></canvas>
+        <canvas class="fall" data-kind="lava" data-speed="0.6" style="left: 69.4%; top: 66.5%; width: 1.8%; height: 25%;"></canvas>
+        <canvas class="fall" data-kind="lava" data-speed="0.5" style="left: 76.5%; top: 66.5%; width: 1.8%; height: 25%;"></canvas>
+
+        <!-- Warm Glows & Cold Cauldron Impact Glow -->
+        <div class="glow" style="left: 70%; top: 93%; width: 26%; animation-delay: -0.6s;"></div>
+        <div class="glow" style="left: 16.8%; top: 78.2%; width: 6%; animation-delay: -1.7s;"></div>
+        <div class="glow" style="left: 27.8%; top: 85.3%; width: 4%; animation-delay: -0.3s;"></div>
+        <div class="glow" style="left: 18%; top: 66.3%; width: 8%; animation-delay: -2.1s;"></div>
+        <div class="glow cold" style="left: 73%; top: 33%; width: 14%; animation-delay: -1.1s;"></div>
+
+        <!-- Cauldron Bubbles Canvas (x 60-84%, y 8-36%) -->
+        <canvas class="dust" data-kind="bubble" data-count="22" data-x="60" data-w="24" data-y="8" data-h="28"></canvas>
+      </div>
+
+      <!-- Section Copy -->
+      <div class="copy" data-reveal style="left: 6.5%; top: 21%; width: 41%;">
+        <h2><span class="ln"><span>For the Few</span></span></h2>
+        <div class="rule"></div>
+        <h3><span class="ln"><span>We Partner Only With Those Who Think Different.</span></span></h3>
+        <p>
+          <span class="ln"><span>Greatness cannot be mass-produced. Each season we open our</span></span>
+          <span class="ln"><span>foundry doors to a strictly limited roster of visionary</span></span>
+          <span class="ln"><span>clients who dare to challenge convention and lead their field.</span></span>
+        </p>
+        <h3><span class="ln"><span>Obsessed With Customer Happiness.</span></span></h3>
+        <p>
+          <span class="ln"><span>By working with only a select few, we pour our full creative</span></span>
+          <span class="ln"><span>fire into your vision—delivering work that makes both you</span></span>
+          <span class="ln"><span>and your customers fall in love at first interaction.</span></span>
+        </p>
+        <div class="btn-wrap">
+          <span class="ln"><span><a href="#finale" class="btn" data-nav>Apply for a slot</a></span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEAM 4: Plan Your Night -> Finale -->
+    <div class="seam" style="--focus: 45;">
+      <div class="band">
+        <img src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_025942_debc2172-5187-4ad4-af0d-307c5e0277b5.png&w=2400&q=85" alt="">
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SCENE 5: FINALE (CAVE MOUTH ONTO THE LANTERN LAKE)
+         ====================================================================== -->
+    <section class="scene" id="finale" style="--focus: 45;">
+      <div class="art" style="--img: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261029_023819_5b21be3d-159e-4d1d-a3b3-80339bc5d5f1.png&w=2400&q=85');">
+        <div class="bg"></div>
+
+        <!-- Ring Halo Moonglow -->
+        <div class="moonglow" style="left: 39.1%; top: 56.6%; width: 19%;"></div>
+
+        <!-- Lake Moonlight Shimmer Canvas (x 34-44%, y 69-91%) -->
+        <canvas class="dust" data-kind="shimmer" data-count="90" data-x="34" data-w="10" data-y="69" data-h="22"></canvas>
+
+        <!-- 15 Warm Floating Lantern & Cave Jack-o'-Lantern Glows -->
+        <div class="glow" style="left: 29.9%; top: 76.7%; width: 3.4%; animation-delay: -0.3s;"></div>
+        <div class="glow" style="left: 32.9%; top: 72.7%; width: 2.4%; animation-delay: -1.5s;"></div>
+        <div class="glow" style="left: 45.9%; top: 72.7%; width: 2.4%; animation-delay: -2.2s;"></div>
+        <div class="glow" style="left: 48.3%; top: 77.4%; width: 3.6%; animation-delay: -0.8s;"></div>
+        <div class="glow" style="left: 55.4%; top: 81.8%; width: 4%; animation-delay: -1.9s;"></div>
+        <div class="glow" style="left: 58.1%; top: 75.6%; width: 3.2%; animation-delay: -0.5s;"></div>
+        <div class="glow" style="left: 53.9%; top: 72.2%; width: 2.2%; animation-delay: -2.6s;"></div>
+        <div class="glow" style="left: 62.5%; top: 72.5%; width: 2.2%; animation-delay: -1.2s;"></div>
+        <div class="glow" style="left: 69.9%; top: 80.9%; width: 4%; animation-delay: -0.1s;"></div>
+        <div class="glow" style="left: 74.9%; top: 75.9%; width: 3.2%; animation-delay: -1.7s;"></div>
+        <div class="glow" style="left: 73%; top: 72.3%; width: 2.2%; animation-delay: -2.4s;"></div>
+        <div class="glow" style="left: 79.1%; top: 72.5%; width: 2.2%; animation-delay: -0.9s;"></div>
+        <div class="glow" style="left: 24.8%; top: 72.1%; width: 2.2%; animation-delay: -1.4s;"></div>
+        <div class="glow" style="left: 7.8%; top: 65.4%; width: 5%; animation-delay: -2.0s;"></div>
+        <div class="glow" style="left: 89.8%; top: 76.9%; width: 5%; animation-delay: -0.6s;"></div>
+
+        <!-- Ghost Sprites -->
+        <div class="sprite ghost ghost2" data-x="66" data-y="26" style="width: 3%;"></div>
+        <div class="sprite ghost ghost1" data-x="27" data-y="38" style="width: 2.6%;"></div>
+
+        <!-- 3 Bats in Band 24-40% -->
+        <div class="sprite bat" data-y0="27" data-amp="2.2" data-dur="11.4" data-off="0.22" data-rate="9.8" style="width: 2.6%;"></div>
+        <div class="sprite bat" data-y0="33" data-amp="2.8" data-dur="14.6" data-off="0.64" data-rate="8.6" style="width: 2.0%;"></div>
+        <div class="sprite bat" data-y0="37" data-amp="1.6" data-dur="9.8" data-off="0.89" data-rate="11.4" style="width: 2.3%;"></div>
+      </div>
+
+      <!-- Finale Centered Copy -->
+      <div class="copy finale-copy" data-reveal>
+        <h2><span class="ln"><span>Ready to forge the extraordinary?</span></span></h2>
+        <div class="rule"></div>
+        <p style="margin: 0 auto 6px; max-width: 56ch;">
+          <span class="ln"><span>Tell us what you are building. If you think different,</span></span>
+          <span class="ln"><span>let’s bring your next website, poster, or digital world to life.</span></span>
+        </p>
+        <div class="btn-wrap">
+          <span class="ln"><span><a href="#top" class="btn" data-nav>Start a project</a></span></span>
+          <span class="ln"><span><a href="#story" class="btn ghost-btn" data-nav>Read our story</a></span></span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let isReducedMotion = reducedMotionQuery.matches;
+
+      const scroller = document.getElementById('scroller');
+      const heroScene = document.getElementById('top');
+      const heroArt = document.getElementById('hero-art');
+      const heroCopy = document.getElementById('hero-copy');
+      const heroTitle = document.getElementById('hero-title');
+      const heroSub = document.getElementById('hero-sub');
+      const nav = document.getElementById('nav');
+      const lamp = document.getElementById('lamp');
+
+      /* ====================================================================
+         1. SELF-HOSTED BASE64 WOFF2 FONT EMBEDDING (DYNAMIC FETCH & INJECT)
+         ==================================================================== */
+      async function embedFontsAsBase64() {
+        try {
+          const cssUrl = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@300..700&display=swap';
+          const res = await fetch(cssUrl);
+          if (!res.ok) return;
+          let cssText = await res.text();
+          const urlMatches = [...cssText.matchAll(/url\((https:\/\/[^)]+\.woff2)\)/g)];
+          const uniqueUrls = [...new Set(urlMatches.map(m => m[1]))];
+
+          await Promise.all(uniqueUrls.map(async (fontUrl) => {
+            try {
+              const fontRes = await fetch(fontUrl);
+              const blob = await fontRes.blob();
+              const dataUrl = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+              });
+              cssText = cssText.split(fontUrl).join(dataUrl);
+            } catch (_) {}
+          }));
+
+          const styleEl = document.createElement('style');
+          styleEl.setAttribute('data-embedded-fonts', 'true');
+          styleEl.textContent = cssText;
+          document.head.appendChild(styleEl);
+        } catch (_) {}
+      }
+      embedFontsAsBase64();
+
+      /* ====================================================================
+         2. SMOOTH SCROLL & PAGE HEIGHT SYNCHRONIZATION
+         ==================================================================== */
+      let curScroll = window.scrollY || 0;
+      let heroHeight = window.innerHeight;
+
+      function syncBodyHeight() {
+        const totalH = scroller.offsetHeight;
+        document.body.style.height = totalH + 'px';
+        heroHeight = heroScene.offsetHeight || window.innerHeight;
+      }
+
+      // Anchor Links Native Jump -> Smooth Eased Glide
+      document.querySelectorAll('[data-nav]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (!href || !href.startsWith('#')) return;
+          const target = document.querySelector(href);
+          if (!target) return;
+          e.preventDefault();
+          const targetTop = target.offsetTop;
+          window.scrollTo({ top: targetTop, behavior: 'instant' });
+        });
+      });
+
+      /* ====================================================================
+         3. CURSOR LANTERN LIGHT & POINTER TRACKING
+         ==================================================================== */
+      let mouseX = -9999;
+      let mouseY = -9999;
+      let lampX = window.innerWidth * 0.5;
+      let lampY = window.innerHeight * 0.5;
+      let lampActive = false;
+
+      window.addEventListener('pointermove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!lampActive) {
+          lampX = mouseX;
+          lampY = mouseY;
+          lampActive = true;
+        }
+      }, { passive: true });
+
+      window.addEventListener('pointerleave', () => {
+        mouseX = -9999;
+        mouseY = -9999;
+      });
+
+      /* ====================================================================
+         4. PRE-RENDERED STREAK SPRITES & WATERFALL / LAVA CANVASES
+         ==================================================================== */
+      function createStreakSprite(stops) {
+        const c = document.createElement('canvas');
+        c.width = 8;
+        c.height = 160;
+        const ctx = c.getContext('2d');
+        const g = ctx.createLinearGradient(0, 0, 0, 160);
+        for (let i = 0; i < stops.length; i++) {
+          g.addColorStop(stops[i][0], stops[i][1]);
+        }
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 8, 160);
+        return c;
+      }
+
+      const streakSprites = {
+        ghost: [
+          createStreakSprite([
+            [0, 'rgba(190,240,255,0)'],
+            [0.35, 'rgba(210,248,255,.95)'],
+            [1, 'rgba(120,200,255,0)']
+          ]),
+          createStreakSprite([
+            [0, 'rgba(120,190,255,0)'],
+            [0.50, 'rgba(140,215,255,.8)'],
+            [1, 'rgba(90,150,255,0)']
+          ])
+        ],
+        lava: [
+          createStreakSprite([
+            [0, 'rgba(255,190,80,0)'],
+            [0.40, 'rgba(255,236,150,1)'],
+            [1, 'rgba(255,120,30,0)']
+          ]),
+          createStreakSprite([
+            [0, 'rgba(255,120,30,0)'],
+            [0.50, 'rgba(255,150,50,.9)'],
+            [1, 'rgba(255,80,20,0)']
+          ])
+        ]
+      };
+
+      const fallCanvases = Array.from(document.querySelectorAll('canvas.fall')).map(canvas => {
+        const kind = canvas.dataset.kind || 'ghost';
+        const speed = parseFloat(canvas.dataset.speed || '1');
+        const isSeam = canvas.dataset.seam === 'true';
+        const ctx = canvas.getContext('2d');
+        return {
+          canvas,
+          ctx,
+          kind,
+          speed,
+          isSeam,
+          w: 0,
+          h: 0,
+          dpr: 1,
+          streaks: []
+        };
+      });
+
+      function initFallCanvases() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        fallCanvases.forEach(f => {
+          const w = f.canvas.offsetWidth;
+          const h = f.canvas.offsetHeight;
+          if (w === 0 || h === 0) return;
+
+          f.w = w;
+          f.h = h;
+          f.dpr = dpr;
+          f.canvas.width = Math.round(w * dpr);
+          f.canvas.height = Math.round(h * dpr);
+
+          const isGhost = f.kind === 'ghost';
+          const count = isGhost
+            ? Math.round(w / 2.2) * 2
+            : Math.round(w / 3) * 3;
+
+          const streaks = [];
+          for (let i = 0; i < count; i++) {
+            const x = isGhost
+              ? Math.random() * w
+              : (0.25 + Math.random() * 0.5) * w;
+            const sw = isGhost
+              ? 0.8 + Math.random() * 3.2
+              : 1.0 + Math.random() * 2.2;
+            const len = isGhost
+              ? 60 + Math.random() * 220
+              : 30 + Math.random() * 70;
+            const v = isGhost
+              ? 420 + Math.random() * 340
+              : 195 + Math.random() * 155;
+            const alpha = 0.18 + Math.random() * 0.55;
+            const phase = Math.random() * (h + len);
+            const spriteIdx = Math.random() < 0.45 ? 0 : 1;
+
+            let edgeFactor = 1;
+            if (isGhost && w > 0) {
+              const norm = (x / w - 0.5) * 2;
+              edgeFactor = 1 - norm * norm * 0.6;
+            }
+
+            streaks.push({
+              x,
+              sw,
+              len,
+              v,
+              alpha: alpha * edgeFactor,
+              phase,
+              sprite: streakSprites[f.kind][spriteIdx]
+            });
+          }
+          f.streaks = streaks;
+        });
+      }
+
+      function renderFallCanvas(f, t) {
+        const { ctx, w, h, dpr, isSeam, speed, streaks } = f;
+        if (w <= 0 || h <= 0) return;
+
+        ctx.save();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        // Seam waterfalls get an opaque horizontal gradient water body first
+        if (isSeam) {
+          ctx.globalCompositeOperation = 'source-over';
+          const bgGrad = ctx.createLinearGradient(0, 0, w, 0);
+          bgGrad.addColorStop(0, 'rgba(80,150,255,0)');
+          bgGrad.addColorStop(0.18, 'rgba(90,175,255,.7)');
+          bgGrad.addColorStop(0.50, 'rgba(175,238,255,.96)');
+          bgGrad.addColorStop(0.82, 'rgba(90,175,255,.7)');
+          bgGrad.addColorStop(1, 'rgba(80,150,255,0)');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (let i = 0; i < streaks.length; i++) {
+          const s = streaks[i];
+          const span = h + s.len;
+          const y = ((t * s.v * speed + s.phase) % span) - s.len;
+          ctx.globalAlpha = s.alpha;
+          ctx.drawImage(s.sprite, s.x - s.sw * 0.5, y, s.sw, s.len);
+          if (y - span > -s.len) {
+            ctx.drawImage(s.sprite, s.x - s.sw * 0.5, y - span, s.sw, s.len);
+          }
+        }
+        ctx.restore();
+      }
+
+      /* ====================================================================
+         5. PARTICLE CANVASES (WISP, MOTE, SPRAY, BUBBLE, SHIMMER)
+         ==================================================================== */
+      const dustCanvases = Array.from(document.querySelectorAll('canvas.dust')).map(canvas => {
+        const kind = canvas.dataset.kind;
+        const count = parseInt(canvas.dataset.count || '50', 10);
+        const bx = parseFloat(canvas.dataset.x || '0') / 100;
+        const bw = parseFloat(canvas.dataset.w || '100') / 100;
+        const by = parseFloat(canvas.dataset.y || '0') / 100;
+        const bh = parseFloat(canvas.dataset.h || '100') / 100;
+        const ctx = canvas.getContext('2d');
+
+        const particles = [];
+        for (let i = 0; i < count; i++) {
+          let u = Math.random();
+          let v = Math.random();
+          if (kind === 'wisp') {
+            u = 0.2 + Math.random() * 0.6;
+            v = 0.35 + Math.random() * 0.63;
+          }
+          particles.push({
+            u,
+            v,
+            r: Math.random(),
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.4 + Math.random() * 0.8
+          });
+        }
+
+        return {
+          canvas,
+          ctx,
+          kind,
+          bx,
+          bw,
+          by,
+          bh,
+          w: 0,
+          h: 0,
+          dpr: 1,
+          particles
+        };
+      });
+
+      function initDustCanvases() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        dustCanvases.forEach(d => {
+          const w = d.canvas.offsetWidth;
+          const h = d.canvas.offsetHeight;
+          if (w === 0 || h === 0) return;
+          d.w = w;
+          d.h = h;
+          d.dpr = dpr;
+          d.canvas.width = Math.round(w * dpr);
+          d.canvas.height = Math.round(h * dpr);
+        });
+      }
+
+      function renderDustCanvas(d, t, dt) {
+        const { ctx, w, h, dpr, kind, bx, bw, by, bh, particles } = d;
+        if (w <= 0 || h <= 0) return;
+
+        ctx.save();
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        const boxX = bx * w;
+        const boxW = bw * w;
+        const boxY = by * h;
+        const boxH = bh * h;
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+
+          if (kind === 'wisp') {
+            if (!isReducedMotion) {
+              p.v -= 0.02 * p.speed * dt;
+              if (p.v <= 0.35) {
+                p.v = 0.98;
+                p.u = 0.2 + Math.random() * 0.6;
+              }
+            }
+            const progress = Math.max(0, Math.min(1, (0.98 - p.v) / (0.98 - 0.35)));
+            const fadeIn = Math.min(1, progress / 0.25);
+            const pulse = Math.abs(Math.sin(2 * t + p.phase));
+            const alpha = fadeIn * pulse * 0.85;
+            const px = (p.u + Math.sin(t * 1.1 + p.phase) * 0.012) * w;
+            const py = p.v * h;
+            const rad = 0.8 + p.r * 1.8;
+
+            ctx.fillStyle = `rgba(190,240,255,${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.fill();
+
+          } else if (kind === 'mote') {
+            const vCur = (p.v - t * 0.008 * p.speed % 1 + 1) % 1;
+            const px = (p.u + Math.sin(t * 0.8 + p.phase) * 0.02) * w;
+            const py = vCur * h;
+            const rad = 0.6 + p.r * 1.4;
+            const alpha = 0.25 + (0.5 + 0.5 * Math.sin(t * 1.5 + p.phase)) * 0.5;
+
+            ctx.fillStyle = `rgba(170,225,255,${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.fill();
+
+          } else if (kind === 'spray') {
+            const life = (t * p.speed * 0.8 + p.phase) % 1;
+            const px = boxX + (p.u + (p.r - 0.5) * 0.6 * life) * boxW;
+            const py = boxY + (p.v * 0.2 + life * life * 0.9) * boxH;
+            const rad = 0.7 + p.r * 1.6;
+            const alpha = Math.max(0, 1 - life);
+
+            ctx.fillStyle = `rgba(200,245,255,${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(px, py, rad, 0, Math.PI * 2);
+            ctx.fill();
+
+          } else if (kind === 'bubble') {
+            const life = (t * p.speed * 0.16 + p.phase) % 1;
+            const wobble = Math.sin(1.4 * t + p.phase) * 0.03 * boxW;
+            const px = boxX + p.u * boxW + wobble;
+            const py = boxY + (1 - life) * boxH;
+            const rad = (2 + p.r * 7) * (w / 1440);
+            const a = Math.sin(life * Math.PI) * 0.9;
+
+            if (a > 0.01 && rad > 0.2) {
+              const grad = ctx.createRadialGradient(
+                px - rad * 0.3,
+                py - rad * 0.3,
+                rad * 0.05,
+                px,
+                py,
+                rad
+              );
+              grad.addColorStop(0, `rgba(255,240,180,${a.toFixed(3)})`);
+              grad.addColorStop(0.55, `rgba(255,170,70,${(0.55 * a).toFixed(3)})`);
+              grad.addColorStop(1, 'rgba(255,170,70,0)');
+
+              ctx.fillStyle = grad;
+              ctx.beginPath();
+              ctx.arc(px, py, rad, 0, Math.PI * 2);
+              ctx.fill();
+            }
+
+          } else if (kind === 'shimmer') {
+            const spread = 0.3 + p.v * 0.7;
+            const uCentered = 0.5 + (p.u - 0.5) * spread;
+            const px = boxX + uCentered * boxW;
+            const py = boxY + p.v * boxH;
+            const len = 12 + p.r * 20;
+            const a = Math.max(0, Math.sin(t * (1.2 + 2 * p.r) + p.phase)) * 0.8;
+
+            if (a > 0.01) {
+              ctx.fillStyle = `rgba(255,240,205,${a.toFixed(3)})`;
+              ctx.fillRect(px - len * 0.5, py, len, 1.2);
+            }
+          }
+        }
+
+        ctx.restore();
+      }
+
+      /* ====================================================================
+         6. SPRITES IN MOTION (GHOSTS WITH CURSOR REPULSION & FLAPPING BATS)
+         ==================================================================== */
+      const ghosts = Array.from(document.querySelectorAll('.sprite.ghost')).map(el => {
+        const art = el.closest('.art');
+        return {
+          el,
+          art,
+          xPct: parseFloat(el.dataset.x || '50'),
+          yPct: parseFloat(el.dataset.y || '50'),
+          phase: Math.random() * Math.PI * 2,
+          ox: 0,
+          oy: 0
+        };
+      });
+
+      const bats = Array.from(document.querySelectorAll('.sprite.bat')).map(el => {
+        const art = el.closest('.art');
+        return {
+          el,
+          art,
+          y0: parseFloat(el.dataset.y0 || '20'),
+          amp: parseFloat(el.dataset.amp || '2.5'),
+          dur: parseFloat(el.dataset.dur || '12'),
+          off: parseFloat(el.dataset.off || '0'),
+          rate: parseFloat(el.dataset.rate || '10'),
+          isDown: false
+        };
+      });
+
+      function updateSprites(t, dt) {
+        const pushEase = isReducedMotion ? 0 : (1 - Math.exp(-3 * dt));
+
+        // Update Ghosts
+        for (let i = 0; i < ghosts.length; i++) {
+          const g = ghosts[i];
+          const artRect = g.art.getBoundingClientRect();
+          if (artRect.bottom < -120 || artRect.top > window.innerHeight + 120) continue;
+
+          const artW = g.art.offsetWidth;
+          const artH = g.art.offsetHeight;
+
+          const wanderX = isReducedMotion ? 0 : Math.sin(0.35 * t + g.phase) * 0.012 * artW;
+          const wanderY = isReducedMotion ? 0 : Math.sin(0.9 * t + g.phase) * 0.014 * artH;
+
+          const baseX = (g.xPct / 100) * artW + wanderX;
+          const baseY = (g.yPct / 100) * artH + wanderY;
+
+          // Screen space center for cursor repulsion
+          const screenX = artRect.left + baseX + g.ox;
+          const screenY = artRect.top + baseY + g.oy;
+
+          let targetOx = 0;
+          let targetOy = 0;
+
+          if (!isReducedMotion && mouseX > -1000) {
+            const dx = screenX - mouseX;
+            const dy = screenY - mouseY;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 260 && dist > 0.001) {
+              const force = Math.pow(1 - dist / 260, 1.5) * 90;
+              targetOx = (dx / dist) * force;
+              targetOy = (dy / dist) * force;
+            }
+          }
+
+          g.ox += (targetOx - g.ox) * pushEase;
+          g.oy += (targetOy - g.oy) * pushEase;
+
+          const finalX = baseX + g.ox;
+          const finalY = baseY + g.oy;
+          const rot = isReducedMotion ? 0 : (Math.sin(0.7 * t + g.phase) * 6 + g.ox * 0.05);
+
+          g.el.style.transform = `translate3d(${finalX.toFixed(2)}px, ${finalY.toFixed(2)}px, 0) translate(-50%, -50%) rotate(${rot.toFixed(2)}deg)`;
+        }
+
+        // Update Bats
+        for (let i = 0; i < bats.length; i++) {
+          const b = bats[i];
+          const artRect = b.art.getBoundingClientRect();
+          if (artRect.bottom < -120 || artRect.top > window.innerHeight + 120) continue;
+
+          const artW = b.art.offsetWidth;
+          const artH = b.art.offsetHeight;
+
+          const p = isReducedMotion ? b.off : ((t / b.dur + b.off) % 1);
+          const xPct = -8 + p * 116; // -8% -> 108%
+          const yPct = b.y0 + Math.sin(p * 9 + b.off * 6) * b.amp;
+
+          const px = (xPct / 100) * artW;
+          const py = (yPct / 100) * artH;
+
+          b.el.style.transform = `translate3d(${px.toFixed(2)}px, ${py.toFixed(2)}px, 0) translate(-50%, -50%)`;
+
+          if (!isReducedMotion) {
+            const shouldBeDown = Math.floor(t * b.rate) % 2 === 1;
+            if (shouldBeDown !== b.isDown) {
+              b.isDown = shouldBeDown;
+              b.el.classList.toggle('down', shouldBeDown);
+            }
+          }
+        }
+      }
+
+      /* ====================================================================
+         7. WEB ANIMATIONS API LOAD INTRO & SECTION REVEALS
+         ==================================================================== */
+      function runLoadIntro() {
+        if (isReducedMotion) return;
+
+        const ease = 'cubic-bezier(.2, .8, .2, 1)';
+
+        // 1. Letters rise translateY(110%) -> 0 over 1200ms, starting at 250ms, 70ms apart
+        const letters = heroTitle.querySelectorAll('span');
+        letters.forEach((span, idx) => {
+          span.animate(
+            [
+              { transform: 'translateY(110%)' },
+              { transform: 'translateY(0%)' }
+            ],
+            {
+              duration: 1200,
+              delay: 250 + idx * 70,
+              easing: ease,
+              fill: 'forwards'
+            }
+          );
+        });
+
+        // 2. Subtitle opens from center outwards over 1600ms from 900ms
+        const isMobile = window.innerWidth <= 767;
+        const targetLs = isMobile ? '.42em' : '.62em';
+        heroSub.animate(
+          [
+            {
+              letterSpacing: '1.4em',
+              paddingLeft: '1.4em',
+              transform: 'translateX(-50%) translateY(14px)',
+              clipPath: 'inset(0 50% 0 50%)'
+            },
+            {
+              letterSpacing: targetLs,
+              paddingLeft: targetLs,
+              transform: 'translateX(-50%) translateY(0px)',
+              clipPath: 'inset(0 0% 0 0%)'
+            }
+          ],
+          {
+            duration: 1600,
+            delay: 900,
+            easing: ease,
+            fill: 'forwards'
+          }
+        );
+
+        // 3. Hero art scale(1.09) -> 1 over 2600ms, composited with 'add' so it stacks on parallax
+        try {
+          heroArt.animate(
+            [
+              { transform: 'scale(1.09)' },
+              { transform: 'scale(1)' }
+            ],
+            {
+              duration: 2600,
+              easing: ease,
+              composite: 'add'
+            }
+          );
+        } catch (_) {
+          // Fallback if browser doesn't support composite: 'add'
+          heroArt.animate(
+            [
+              { transform: 'scale(1.09)' },
+              { transform: 'scale(1)' }
+            ],
+            {
+              duration: 2600,
+              easing: ease
+            }
+          );
+        }
+
+        // 4. Nav slides down over 900ms from 500ms
+        nav.animate(
+          [
+            { transform: 'translateY(-100%)' },
+            { transform: 'translateY(0%)' }
+          ],
+          {
+            duration: 900,
+            delay: 500,
+            easing: ease,
+            fill: 'forwards'
+          }
+        );
+      }
+
+      const revealBlocks = Array.from(document.querySelectorAll('[data-reveal]')).map(el => ({
+        el,
+        revealed: false
+      }));
+
+      function checkSectionReveals() {
+        const triggerY = window.innerHeight * 0.8;
+        const ease = 'cubic-bezier(.2, .8, .2, 1)';
+
+        for (let i = 0; i < revealBlocks.length; i++) {
+          const block = revealBlocks[i];
+          if (block.revealed) continue;
+
+          const rect = block.el.getBoundingClientRect();
+          if (rect.top <= triggerY) {
+            block.revealed = true;
+            if (isReducedMotion) continue;
+
+            const lines = block.el.querySelectorAll('.ln > span');
+            lines.forEach((span, idx) => {
+              span.animate(
+                [
+                  { transform: 'translateY(105%)' },
+                  { transform: 'translateY(0%)' }
+                ],
+                {
+                  duration: 1000,
+                  delay: idx * 80,
+                  easing: ease,
+                  fill: 'forwards'
+                }
+              );
+            });
+
+            const rule = block.el.querySelector('.rule');
+            if (rule) {
+              rule.animate(
+                [
+                  { transform: 'scaleX(0)' },
+                  { transform: 'scaleX(1)' }
+                ],
+                {
+                  duration: 1100,
+                  delay: 160,
+                  easing: ease,
+                  fill: 'forwards'
+                }
+              );
+            }
+          }
+        }
+      }
+
+      /* ====================================================================
+         8. MAIN ANIMATION LOOP & RESIZE HANDLING
+         ==================================================================== */
+      let lastTime = performance.now();
+
+      function tick(now) {
+        const dt = Math.min(0.1, Math.max(0.001, (now - lastTime) / 1000));
+        lastTime = now;
+        const t = isReducedMotion ? 0 : now / 1000;
+
+        // 1. Eased Momentum Smooth Scroll
+        const targetScroll = window.scrollY || 0;
+        if (isReducedMotion) {
+          curScroll = targetScroll;
+        } else {
+          const diff = targetScroll - curScroll;
+          if (Math.abs(diff) < 0.05) {
+            curScroll = targetScroll;
+          } else {
+            curScroll += diff * (1 - Math.exp(-7.5 * dt));
+          }
+        }
+        scroller.style.transform = `translate3d(0, ${(-curScroll).toFixed(2)}px, 0)`;
+
+        // 2. Hero Parallax & Letter-Spacing Spread
+        if (curScroll < heroHeight * 1.5) {
+          heroArt.style.transform = `translate3d(0, ${(curScroll * 0.32).toFixed(2)}px, 0)`;
+          heroCopy.style.transform = `translate3d(0, ${(curScroll * 0.55).toFixed(2)}px, 0)`;
+          const hp = Math.max(0, Math.min(1, curScroll / Math.max(1, heroHeight)));
+          heroTitle.style.setProperty('--lsx', `${(hp * 0.18).toFixed(4)}em`);
+        }
+
+        // 3. Section Mask Reveals
+        checkSectionReveals();
+
+        // 4. Cursor Lantern Light Smoothing
+        if (lampActive && mouseX > -1000) {
+          const lampEase = isReducedMotion ? 1 : (1 - Math.exp(-10 * dt));
+          lampX += (mouseX - lampX) * lampEase;
+          lampY += (mouseY - lampY) * lampEase;
+          lamp.style.transform = `translate3d(${(lampX - 260).toFixed(1)}px, ${(lampY - 260).toFixed(1)}px, 0)`;
+        }
+
+        // 5. Render Visible Waterfall & Lava Canvases (within 50px of viewport)
+        const vh = window.innerHeight;
+        for (let i = 0; i < fallCanvases.length; i++) {
+          const f = fallCanvases[i];
+          const rect = f.canvas.getBoundingClientRect();
+          if (rect.bottom >= -50 && rect.top <= vh + 50) {
+            renderFallCanvas(f, t);
+          }
+        }
+
+        // 6. Render Visible Particle Canvases
+        for (let i = 0; i < dustCanvases.length; i++) {
+          const d = dustCanvases[i];
+          const rect = d.canvas.getBoundingClientRect();
+          if (rect.bottom >= 0 && rect.top <= vh) {
+            renderDustCanvas(d, t, dt);
+          }
+        }
+
+        // 7. Update Ghosts & Bats
+        updateSprites(t, dt);
+
+        if (!isReducedMotion) {
+          requestAnimationFrame(tick);
+        }
+      }
+
+      function handleResize() {
+        syncBodyHeight();
+        initFallCanvases();
+        initDustCanvases();
+        if (isReducedMotion) {
+          tick(performance.now());
+        }
+      }
+
+      window.addEventListener('resize', handleResize, { passive: true });
+
+      if (isReducedMotion) {
+        window.addEventListener('scroll', () => {
+          tick(performance.now());
+        }, { passive: true });
+      }
+
+      reducedMotionQuery.addEventListener('change', (e) => {
+        isReducedMotion = e.matches;
+        if (!isReducedMotion) {
+          lastTime = performance.now();
+          requestAnimationFrame(tick);
+        }
+      });
+
+      window.addEventListener('load', () => {
+        syncBodyHeight();
+        initFallCanvases();
+        initDustCanvases();
+        runLoadIntro();
+        lastTime = performance.now();
+        requestAnimationFrame(tick);
+      });
+
+      // Immediate initial setup in case images take a moment
+      syncBodyHeight();
+      initFallCanvases();
+      initDustCanvases();
+    })();
+  </script>
+</body>
+</html>
